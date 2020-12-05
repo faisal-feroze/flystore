@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
-use Session;
+//use Session;
 use Cookie;
 use App\Products;
 use App\Category;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
@@ -240,6 +242,44 @@ class CartController extends Controller
 
 
       }
+
+
+      public function accessSessionData(Request $request) {
+       if($request->session()->has('my_name')){
+         $value = $request->session()->get('my_name');
+       }else{
+         $value ="123";
+       }
+
+       return $value;
+          // echo 'No data in the session';
+    }
+
+
+    public function storeSessionData(Request $request) {
+      $cart = [
+              2 => [
+                "name" => "murgi",
+                "quantity" => 1,
+                "price" => 10,
+                "user_id" => 1
+              ],[
+                "name" => "sadasd",
+                "quantity" => 2,
+                "price" => 20,
+                "user_id" => 1
+              ]
+      ];
+       $request->session()->put('my_name',$cart,1);
+       //echo "Data has been added to session";
+       return $cart;
+    }
+
+
+    public function deleteSessionData(Request $request) {
+       $request->session()->forget('my_name');
+       echo "Data has been removed from session.";
+    }
 
 
 

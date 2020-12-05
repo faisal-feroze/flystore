@@ -37,5 +37,9 @@ Route::get('/show/cart','Api\CartController@show_cart');
 
 Route::middleware('auth:api')->post('/update/profile','Api\Auth\LoginController@profile_update');
 
-Route::post('/set/cookie','Api\CartController@set_cookie');
-Route::get('/get/cookie','Api\CartController@get_cookie');
+// Route::post('/set/cookie','Api\CartController@set_cookie');
+// Route::get('/get/cookie','Api\CartController@get_cookie');
+
+Route::post('/set/cookie','Api\CartController@storeSessionData');
+Route::get('/get/cookie','Api\CartController@accessSessionData');
+Route::post('/delete/cookie','Api\CartController@deleteSessionData');
