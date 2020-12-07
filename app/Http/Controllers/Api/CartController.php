@@ -265,23 +265,12 @@ class CartController extends Controller
           }
           return $cart_items;
       }
+
     public function storeSessionData(Request $request) {
-      // $cart = [
-      //         2 => [
-      //           "name" => "murgi",
-      //           "quantity" => 1,
-      //           "price" => 10,
-      //           "user_id" => 1
-      //         ],[
-      //           "name" => "sadasd",
-      //           "quantity" => 2,
-      //           "price" => 20,
-      //           "user_id" => 1
-      //         ]
-      // ];
+
       $inputs = $request->all();
       $product_id = $inputs['product_id'];
-      $product_qty = $inputs['qty'];
+      $product_qty = $inputs['quantity'];
       $product = Products::find($product_id);
 
       if (Auth::guard('api')->check()){
@@ -289,78 +278,25 @@ class CartController extends Controller
       }else{
         $user_id = NULL;
       }
-      // $data = [];
-      //     foreach($product_id as $data) {
-      //         $data[] = [
-      //           "product_id" => $product_id,
-      //           "quantity" =>$product_qty,
-      //           "price" => $product->discount_price
-      //         ];
-      //     }
 
 
-        // code...
         $cart = [
-                // "data" => [
-                //     "product_id" => $product_id,
-                //     "quantity" =>$product_qty,
-                //     "price" => $product->discount_price,
-                //   //  "user_id" => $user_id
-                // ]
-
-
-                // "product_id" => $product_id,
-                //    "quantity" =>$product_qty,
-                //    "price" => $product->discount_price,
-                 //  "user_id" => $user_id
-
-
-
-                     "product_id" => $product_id,
-                     "quantity" =>$product_qty,
-                     "price" => $product->discount_price,
-                   //  "user_id" => $user_id
-
-
+             "product_id" => $product_id,
+             "quantity" =>$product_qty,
+             "price" => $product->discount_price,
+             "user_id" => $user_id
         ];
 
-                        // $cart->items = $this->prepareCartItems($cart->items);
-                        if( isset($cart->$product_id) ){
-                                      //  $cart->items = $this->prepareCartItems($cart->items);
-                                        echo "fghgj";
-                                    }
 
-
-
-
-  //  foreach ($cart as $product_id) {
-  // //   $val = compact('cart');
-  //
-  //            //array_push($cart, $cart);
-  //            $myArray = array("name" => if( isset($cart->items) ){
-  //               $cart->items = $this->prepareCartItems($cart->items);
-  //           });
-  //            echo json_encode($myArray);
-  //       // return $cart;
-  //    // code...
-  //  }
-
-                  // foreach ($cart as $p) {
-                  //   echo $p->sku;
-                  //   }
-                  foreach ($cart as $product_id) {
-                    array_push($cart);
-                    // code...
-                  }
-
-
+        if( isset($cart->$product_id) ){
+              echo "fghgj";
+          }
 
    $request->session()->put('my_name',$cart,1);
-    //    $creds = $request->only(['phone','password']);
 
-       //echo "Data has been added to session";
    return $cart;
     }
+
     public function addCart(Request $request){
         $validate = Validator::make($request->all(),[
             'qty' => ['required','gt:0'],
