@@ -10,6 +10,8 @@ use Illuminate\Http\Response;
 use Cookie;
 use App\Products;
 use App\Category;
+use App\Cart;
+use App\User;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -245,6 +247,7 @@ class CartController extends Controller
 
 
       public function accessSessionData(Request $request) {
+
        if($request->session()->has('my_name')){
          $value = $request->session()->get('my_name');
        }else{
@@ -255,33 +258,154 @@ class CartController extends Controller
           // echo 'No data in the session';
     }
 
-
+    protected function prepareCartItems($items = []){
+          $cart_items = [];
+          foreach($items as $item){
+              array_push($cart_items, $item);
+          }
+          return $cart_items;
+      }
     public function storeSessionData(Request $request) {
-      $cart = [
-              2 => [
-                "name" => "murgi",
-                "quantity" => 1,
-                "price" => 10,
-                "user_id" => 1
-              ],[
-                "name" => "sadasd",
-                "quantity" => 2,
-                "price" => 20,
-                "user_id" => 1
-              ]
-      ];
-       $request->session()->put('my_name',$cart,1);
-       //echo "Data has been added to session";
-       return $cart;
-    }
+      // $cart = [
+      //         2 => [
+      //           "name" => "murgi",
+      //           "quantity" => 1,
+      //           "price" => 10,
+      //           "user_id" => 1
+      //         ],[
+      //           "name" => "sadasd",
+      //           "quantity" => 2,
+      //           "price" => 20,
+      //           "user_id" => 1
+      //         ]
+      // ];
+      $inputs = $request->all();
+      $product_id = $inputs['product_id'];
+      $product_qty = $inputs['qty'];
+      $product = Products::find($product_id);
 
+      if (Auth::guard('api')->check()){
+        $user_id = auth('api')->user()->getKey();
+      }else{
+        $user_id = NULL;
+      }
+      // $data = [];
+      //     foreach($product_id as $data) {
+      //         $data[] = [
+      //           "product_id" => $product_id,
+      //           "quantity" =>$product_qty,
+      //           "price" => $product->discount_price
+      //         ];
+      //     }
+
+
+        // code...
+        $cart = [
+                // "data" => [
+                //     "product_id" => $product_id,
+                //     "quantity" =>$product_qty,
+                //     "price" => $product->discount_price,
+                //   //  "user_id" => $user_id
+                // ]
+
+
+                // "product_id" => $product_id,
+                //    "quantity" =>$product_qty,
+                //    "price" => $product->discount_price,
+                 //  "user_id" => $user_id
+
+
+
+                     "product_id" => $product_id,
+                     "quantity" =>$product_qty,
+                     "price" => $product->discount_price,
+                   //  "user_id" => $user_id
+
+
+        ];
+
+                        // $cart->items = $this->prepareCartItems($cart->items);
+                        if( isset($cart->$product_id) ){
+                                      //  $cart->items = $this->prepareCartItems($cart->items);
+                                        echo "fghgj";
+                                    }
+
+
+
+
+  //  foreach ($cart as $product_id) {
+  // //   $val = compact('cart');
+  //
+  //            //array_push($cart, $cart);
+  //            $myArray = array("name" => if( isset($cart->items) ){
+  //               $cart->items = $this->prepareCartItems($cart->items);
+  //           });
+  //            echo json_encode($myArray);
+  //       // return $cart;
+  //    // code...
+  //  }
+
+                  // foreach ($cart as $p) {
+                  //   echo $p->sku;
+                  //   }
+                  foreach ($cart as $product_id) {
+                    array_push($cart);
+                    // code...
+                  }
+
+
+
+   $request->session()->put('my_name',$cart,1);
+    //    $creds = $request->only(['phone','password']);
+
+       //echo "Data has been added to session";
+   return $cart;
+    }
+    public function addCart(Request $request){
+        $validate = Validator::make($request->all(),[
+            'qty' => ['required','gt:0'],
+            'product_id' => ['required'],
+
+        ]);
+
+        if( $validate->fails() ){
+            $this->message = $this->getValidationError($validate);
+            return $this->apiOutput();
+        }
+        try{
+            $product = Products::findOrFail($request->product_id);
+
+            //$cart = new Cart($this->cart());
+            $cart->addCart($product, $request->qty, asset($product->image));
+            $this->storeInSession($request, $cart);
+          //  $cart = new Cart($cart);
+            if( isset($cart->items) ){
+                $cart->items = $this->prepareCartItems($cart->items);
+            }
+            $total_cart_amount = isset($cart->total_price) ? $cart->total_price : 0;
+            $cart->offer_message = $this->availableOffer($total_cart_amount)->title ?? '';
+            $cart->current_offer_amount = $this->getApplicableOffer($total_cart_amount)->amount ?? 0;
+            $this->data = $cart;
+            $this->apiSuccess("Add to Cart Successfully");
+        }catch(Exception $e){
+            $this->message = $this->getError($e);
+        }
+        return $this->apiOutput();
+    }
 
     public function deleteSessionData(Request $request) {
        $request->session()->forget('my_name');
        echo "Data has been removed from session.";
     }
 
-
+    public function purches(Request $request) {
+      $value = $request->session()->get('my_name');
+      //$value->attachRole('order');
+      $asd[auth()->user()->id] = $value;
+    //  echo auth()->user()->id;
+      return $value;
+        //return response()->json(auth()->>user()->id);
+    }
 
 
 

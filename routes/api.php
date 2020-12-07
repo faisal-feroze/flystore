@@ -43,3 +43,5 @@ Route::middleware('auth:api')->post('/update/profile','Api\Auth\LoginController@
 Route::post('/set/cookie','Api\CartController@storeSessionData');
 Route::get('/get/cookie','Api\CartController@accessSessionData');
 Route::post('/delete/cookie','Api\CartController@deleteSessionData');
+Route::middleware('auth:api')->get('/purches','Api\CartController@purches');
+// Route::middleware('auth:api')->get('/me','Api\Auth\LoginController@me');
