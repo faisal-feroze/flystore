@@ -40,8 +40,11 @@ Route::middleware('auth:api')->post('/update/profile','Api\Auth\LoginController@
 // Route::post('/set/cookie','Api\CartController@set_cookie');
 // Route::get('/get/cookie','Api\CartController@get_cookie');
 
-Route::post('/set/cookie','Api\CartController@storeSessionData');
-Route::get('/get/cookie','Api\CartController@accessSessionData');
-Route::get('/delete/cookie','Api\CartController@deleteSessionData');
-Route::middleware('auth:api')->get('/purches','Api\CartController@purches');
+Route::post('/add/to/cart','Api\CartController@add_to_cart');
+Route::get('/show/cart','Api\CartController@show_cart');
+Route::get('/delete/cart','Api\CartController@clear_cart');
+Route::post('/delete/cart_item','Api\CartController@delete_cart_item');
+
+
+//Route::middleware('auth:api')->get('/purches','Api\CartController@purches');
 // Route::middleware('auth:api')->get('/me','Api\Auth\LoginController@me');
