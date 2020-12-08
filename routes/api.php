@@ -46,5 +46,5 @@ Route::get('/delete/cart','Api\CartController@clear_cart');
 Route::post('/delete/cart_item','Api\CartController@delete_cart_item');
 
 
-//Route::middleware('auth:api')->get('/purches','Api\CartController@purches');
+Route::middleware('auth:api')->post('/purchase','Api\CartController@purchase');
 // Route::middleware('auth:api')->get('/me','Api\Auth\LoginController@me');

@@ -11,6 +11,7 @@ use App\Products;
 use App\Category;
 use App\Cart;
 use App\User;
+use App\Order;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -66,6 +67,7 @@ class CartController extends Controller
               $price = $product->discount_price * $product_qty;
               $cart[$i]['quantity'] = $product_qty;
               $cart[$i]['total_price'] = $price;
+              $request->session()->put('my_name',$cart,1);
               $flag = 1;
           }
         }
@@ -128,6 +130,37 @@ class CartController extends Controller
            'message'=>'Cart is cleared',
          ]);
     }
+
+    public function purchase(Request $request) {
+      $inputs = $request->all();
+      $shipping_address = $inputs['shipping_address'];
+      $payment_method = $inputs['payment_method'];
+      $user_id = auth('api')->user()->getKey();
+      $status = "placed";
+      $payment_status = "unpaid";
+
+      $lastOrderId = Order::select('id')->orderBy('id','desc')->first();
+      $lastOrderId=(int)substr($lastOrderId , 6);
+      $lastOrderId++;
+      $order_no = 'ORDER-'.$lastOrderId;
+      $cart = $request->session()->get('my_name');
+
+      return response()->json(
+        [
+          'message'=>'order',
+          'payment_method'=>$payment_method,
+          'shipping_address'=>$shipping_address,
+          'user_id'=>$user_id,
+          'status'=>$status,
+          'payment_status'=>$payment_status,
+          'order_no'=>$order_no,
+          'cart'=>$cart
+        ]);
+
+
+    }
+
+
 
 
 
