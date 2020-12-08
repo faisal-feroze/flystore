@@ -29,9 +29,18 @@ class CartController extends Controller
          }
 
          $cart = $request->session()->get('my_name');
+         $cart_total_price = 0;
+         if($cart){
+           for($i=0; $i<count($cart); $i++ ){
+             $cart_total_price = $cart_total_price + $cart[$i]['total_price'];
+           }
+         }
+         $total_items = count($cart);
          return response()->json(
            ['message'=>'Successfull',
-           "user_id" => $user_id,
+           'user_id' => $user_id,
+           'total_items' => $total_items,
+           'cart_total_price' => $cart_total_price,
            'data'=>$cart
            ]);
        }else{
@@ -145,17 +154,40 @@ class CartController extends Controller
       $order_no = 'ORDER-'.$lastOrderId;
       $cart = $request->session()->get('my_name');
 
-      return response()->json(
-        [
-          'message'=>'order',
-          'payment_method'=>$payment_method,
-          'shipping_address'=>$shipping_address,
-          'user_id'=>$user_id,
-          'status'=>$status,
-          'payment_status'=>$payment_status,
-          'order_no'=>$order_no,
-          'cart'=>$cart
-        ]);
+      if($cart){
+        for($i=0; $i<count($cart); $i++ ){
+          $order_data = [
+              'user_id'=> $user_id,
+              'product_id'=> $cart[$i]['product_id'],
+              'quantity'=> $cart[$i]['quantity'],
+              'total_amount'=> $cart[$i]['total_price'],
+              'shipping_address'=> $shipping_address,
+              'status'=> $status,
+              'order_code'=> $order_no,
+              'payment_method'=> $payment_method,
+              'payment_status'=> $payment_status,
+              'product_name'=> $cart[$i]['name'],
+          ];
+
+          Order::create($order_data);
+        }
+
+        $request->session()->forget('my_name');
+        return response()->json(
+          [
+            'message'=>'Successfully Placed Order',
+          ]);
+
+      }else{
+        return response()->json(
+          [
+            'message'=>'No items in the cart',
+          ]);
+      }
+
+
+      //$request->session()->forget('my_name');
+
 
 
     }
