@@ -195,6 +195,7 @@ class CartController extends Controller
     public function add_to_wishlist(Request $request) {
       $inputs = $request->all();
       $product_id = $inputs['product_id'];
+      $product = Products::find($product_id);
 
       if (Auth::guard('api')->check()){
         $user_id = auth('api')->user()->getKey();
@@ -202,6 +203,9 @@ class CartController extends Controller
         $wishlist_data = [
             'user_id'=> $user_id,
             'product_id'=> $product_id,
+            'product_name'=> $product->name,
+            'price'=> $product->discount_price,
+            'photo'=> $product->image,
         ];
         Wishlist::create($wishlist_data);
 
