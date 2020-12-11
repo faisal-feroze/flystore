@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2020 at 07:34 PM
+-- Generation Time: Dec 11, 2020 at 09:07 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.2.27
 
@@ -87,7 +87,45 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (11, '2020_11_21_194531_create_products_table', 3),
 (12, '2020_11_21_201213_create_categories_table', 3),
 (13, '2020_11_21_202249_create_sub_categories_table', 3),
-(14, '2020_12_02_175203_add_user_info_to_user_table', 4);
+(14, '2020_12_02_175203_add_user_info_to_user_table', 4),
+(15, '2020_12_08_084835_create_orders_table', 5),
+(16, '2020_12_08_101748_add_order_code_to_orders_table', 6),
+(17, '2020_12_08_180730_add_product_name_to_orders_table', 7),
+(18, '2020_12_11_075046_create_wishlists_table', 8);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `total_amount` int(11) NOT NULL,
+  `delivery_agent_id` int(11) DEFAULT NULL,
+  `shipping_address` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `txn_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `order_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `product_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `product_id`, `quantity`, `total_amount`, `delivery_agent_id`, `shipping_address`, `status`, `payment_method`, `payment_detail`, `txn_id`, `payment_status`, `created_at`, `updated_at`, `order_code`, `product_name`) VALUES
+(4, 8, 10, 1, 20, NULL, 'mirpur', 'placed', 'bkash', NULL, NULL, 'unpaid', '2020-12-08 12:13:12', '2020-12-08 12:13:12', 'ORDER-1', 'Ring Chips'),
+(5, 8, 8, 2, 50, NULL, 'mirpur', 'placed', 'bkash', NULL, NULL, 'unpaid', '2020-12-08 12:13:12', '2020-12-08 12:13:12', 'ORDER-1', 'Mr. Twist'),
+(6, 8, 3, 1, 450, NULL, 'mirpur', 'placed', 'bkash', NULL, NULL, 'unpaid', '2020-12-08 12:14:03', '2020-12-08 12:14:03', 'ORDER-6', 'Beef Meat');
 
 -- --------------------------------------------------------
 
@@ -339,6 +377,28 @@ INSERT INTO `users` (`id`, `name`, `email`, `phone`, `present_address`, `distric
 (13, 'rajaqqqdf', 'raqdqdjaqq@gmail.com', '01670000005', NULL, NULL, NULL, NULL, 0, NULL, '$2y$10$jtINye.95gbFU7xuB1LMe.om5/zlzO/mzec3cy4DMzHWXqAvIIR.i', NULL, '2020-11-16 09:01:25', '2020-11-16 09:01:25', NULL, NULL, NULL, NULL),
 (14, 'rajaqqqdfg', 'raqdqdjsssaqq@gmail.com', '01670000006', NULL, NULL, NULL, NULL, 0, NULL, '$2y$10$GjbjPBrWSZDynkTZTI7xi.v9.lRnnSdBO.wsOMQ./5qBrgqhyC9Bu', NULL, '2020-11-16 09:04:00', '2020-11-16 09:04:00', NULL, NULL, NULL, NULL);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wishlists`
+--
+
+CREATE TABLE `wishlists` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `wishlists`
+--
+
+INSERT INTO `wishlists` (`id`, `user_id`, `product_id`, `created_at`, `updated_at`) VALUES
+(1, 8, 2, '2020-12-11 02:03:43', '2020-12-11 02:03:43'),
+(2, 8, 5, '2020-12-11 02:04:56', '2020-12-11 02:04:56');
+
 --
 -- Indexes for dumped tables
 --
@@ -359,6 +419,12 @@ ALTER TABLE `failed_jobs`
 -- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `orders`
+--
+ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -423,6 +489,12 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `users_phone_unique` (`phone`);
 
 --
+-- Indexes for table `wishlists`
+--
+ALTER TABLE `wishlists`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -442,7 +514,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -473,6 +551,12 @@ ALTER TABLE `sub_categories`
 --
 ALTER TABLE `users`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `wishlists`
+--
+ALTER TABLE `wishlists`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
