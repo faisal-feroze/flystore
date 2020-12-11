@@ -47,4 +47,7 @@ Route::post('/delete/cart_item','Api\CartController@delete_cart_item');
 
 
 Route::middleware('auth:api')->post('/purchase','Api\CartController@purchase');
-// Route::middleware('auth:api')->get('/me','Api\Auth\LoginController@me');
+
+Route::middleware('auth:api')->post('/add/to/wishlist','Api\CartController@add_to_wishlist');
+
+Route::middleware('auth:api')->get('/my/wishlist','Api\CartController@my_wishlist');

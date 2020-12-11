@@ -12,6 +12,7 @@ use App\Category;
 use App\Cart;
 use App\User;
 use App\Order;
+use App\Wishlist;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -188,9 +189,58 @@ class CartController extends Controller
 
       //$request->session()->forget('my_name');
 
+    }
+
+
+    public function add_to_wishlist(Request $request) {
+      $inputs = $request->all();
+      $product_id = $inputs['product_id'];
+
+      if (Auth::guard('api')->check()){
+        $user_id = auth('api')->user()->getKey();
+
+        $wishlist_data = [
+            'user_id'=> $user_id,
+            'product_id'=> $product_id,
+        ];
+        Wishlist::create($wishlist_data);
+
+        return response()->json(
+          [
+            'message'=>'Successfully added to wishlist',
+          ]);
+
+      }else{
+        return response()->json(
+          [
+            'message'=>'User Must Login first',
+          ]);
+      }
 
 
     }
+
+
+    public function my_wishlist(Request $request) {
+      if (Auth::guard('api')->check()){
+        $user_id = auth('api')->user()->getKey();
+        $wishlist = Wishlist::where('user_id',$user_id)->get();
+        return response()->json(
+          [
+            'message'=>'My Wishlist',
+            'data'=> $wishlist
+          ]);
+
+      }else{
+        return response()->json(
+          [
+            'message'=>'User Must Login first',
+          ]);
+      }
+
+    }
+
+
 
 
 
